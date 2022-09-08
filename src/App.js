@@ -25,6 +25,16 @@ const App = () => {
     setMistakeIndexes(getMistakesIndexes(TEXT, inputText))
   }, [inputText])
 
+  useEffect(() => {
+    if (timeToFinish !== 0) return;
+    if (inputText.length === 0) return;
+
+    const numOfChars = inputText.length - mistakeIndexes.length;
+    const charsPerSecond = (numOfChars / TIME_IN_SECONDS).toFixed(2);
+
+    alert(`${charsPerSecond} characters per second`)
+  }, [timeToFinish])
+
   return (
     <main className="App">
       <section className="controls">
