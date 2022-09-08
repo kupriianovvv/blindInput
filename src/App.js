@@ -13,6 +13,7 @@ const getMistakesIndexes = (text, input) => {
 }
 
 const App = () => {
+  const [text, setText] = useState(TEXT)
   const [inputText, setInputText] = useState("");
   const [mistakeIndexes, setMistakeIndexes] = useState([2]);
   const inputRef = useRef();
@@ -22,9 +23,16 @@ const App = () => {
     100
   )
 
-  const startTimer = () => {
+  const getText = async () => {
+    const response = await fetch("https://baconipsum.com/api/?type=meat-and-filler");
+    const json = await response.json();
+    setText(json[0])
+    console.log(json[0]);
+  }
+
+  const startTimer = async () => {
     setInputText("");
-    inputRef.current.focus(); //
+    inputRef.current.focus(); 
     start();
   }
 
@@ -34,7 +42,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    setMistakeIndexes(getMistakesIndexes(TEXT, inputText))
+    setMistakeIndexes(getMistakesIndexes(text, inputText))
   }, [inputText])
 
   useEffect(() => {
@@ -43,8 +51,9 @@ const App = () => {
 
     const numOfChars = inputText.length - mistakeIndexes.length;
     const charsPerSecond = (numOfChars / TIME_IN_SECONDS).toFixed(2);
+    const percentOfCorrentChars = (numOfChars / inputText.length * 100).toFixed(2)
     setInputText("");
-    alert(`${charsPerSecond} characters per second`)
+    alert(`${charsPerSecond} characters per second, ${percentOfCorrentChars}% is correct`)
   }, [timeToFinish])
 
   return (
@@ -53,12 +62,13 @@ const App = () => {
         <p className="timer">{(timeToFinish / 1000).toFixed(2)}</p>
         <button className="start" onClick={() => startTimer()}>start</button>
         <button className="reset" onClick={() => resetTimer()}>reset</button>
+        <button className="getText" onClick={() => getText()}>get new text</button>
       </section>
 
       <section className="input">
         <p>
           {
-            TEXT.split("").map((char, index) => {
+            text.split("").map((char, index) => {
               let className = null; //className=null не будет добавлен в DOM, так что пустых классов не будет
               if (inputText.length > index) {
                 let isMistake = mistakeIndexes.includes(index)
