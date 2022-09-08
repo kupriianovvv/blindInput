@@ -50,7 +50,7 @@ const App = () => {
   return (
     <main className="App">
       <section className="controls">
-        <h3 className="timer">{(timeToFinish / 1000).toFixed(2)}</h3>
+        <p className="timer">{(timeToFinish / 1000).toFixed(2)}</p>
         <button className="start" onClick={() => startTimer()}>start</button>
         <button className="reset" onClick={() => resetTimer()}>reset</button>
       </section>
