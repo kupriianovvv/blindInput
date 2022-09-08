@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useCountDown from "./hooks/useCountDown";
 
 const TIME_IN_SECONDS = 10;
@@ -15,11 +15,23 @@ const getMistakesIndexes = (text, input) => {
 const App = () => {
   const [inputText, setInputText] = useState("");
   const [mistakeIndexes, setMistakeIndexes] = useState([2]);
+  const inputRef = useRef();
 
   const [timeToFinish, { start, reset }] = useCountDown(
     TIME_IN_SECONDS * 1000,
     100
   )
+
+  const startTimer = () => {
+    setInputText("");
+    inputRef.current.focus(); //
+    start();
+  }
+
+  const resetTimer = () => {
+    setInputText("");
+    reset();
+  }
 
   useEffect(() => {
     setMistakeIndexes(getMistakesIndexes(TEXT, inputText))
@@ -31,7 +43,7 @@ const App = () => {
 
     const numOfChars = inputText.length - mistakeIndexes.length;
     const charsPerSecond = (numOfChars / TIME_IN_SECONDS).toFixed(2);
-
+    setInputText("");
     alert(`${charsPerSecond} characters per second`)
   }, [timeToFinish])
 
@@ -39,8 +51,8 @@ const App = () => {
     <main className="App">
       <section className="controls">
         <h3 className="timer">{(timeToFinish / 1000).toFixed(2)}</h3>
-        <button className="start" onClick={() => start()}>start</button>
-        <button className="reset" onClick={() => reset()}>reset</button>
+        <button className="start" onClick={() => startTimer()}>start</button>
+        <button className="reset" onClick={() => resetTimer()}>reset</button>
       </section>
 
       <section className="input">
@@ -61,6 +73,7 @@ const App = () => {
           placeholder="Type there"
           value={inputText}
           onChange={e => setInputText(e.target.value)}
+          ref={inputRef}
         />
       </section>
     </main>
