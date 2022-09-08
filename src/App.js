@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import useCountDown from "./hooks/useCountDown";
 
-const TIME = 10;
+const TIME_IN_SECONDS = 10;
 const TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus dolor, volutpat ut suscipit non, ultricies vitae enim. Duis vestibulum risus massa, in pharetra odio porttitor eget. Phasellus vel massa nisl. Nullam auctor eu ex quis eleifend. Phasellus congue odio sed mauris sagittis consequat. Praesent scelerisque vulputate felis, eget suscipit erat hendrerit sit amet. Mauris egestas pretium odio sit amet malesuada.";
 
 const getMistakesIndexes = (text, input) => {
@@ -15,6 +16,11 @@ const App = () => {
   const [inputText, setInputText] = useState("");
   const [mistakeIndexes, setMistakeIndexes] = useState([2]);
 
+  const [timeToFinish, { start, reset }] = useCountDown(
+    TIME_IN_SECONDS * 1000,
+    100
+  )
+
   useEffect(() => {
     setMistakeIndexes(getMistakesIndexes(TEXT, inputText))
   }, [inputText])
@@ -22,9 +28,9 @@ const App = () => {
   return (
     <main className="App">
       <section className="controls">
-        <h3 className="timer">00</h3>
-        <button className="start">start</button>
-        <button className="reset">reset</button>
+        <h3 className="timer">{(timeToFinish / 1000).toFixed(2)}</h3>
+        <button className="start" onClick={() => start()}>start</button>
+        <button className="reset" onClick={() => reset()}>reset</button>
       </section>
 
       <section className="input">
