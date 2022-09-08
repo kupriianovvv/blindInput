@@ -1,10 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const TIME = 10;
 const TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam lacus dolor, volutpat ut suscipit non, ultricies vitae enim. Duis vestibulum risus massa, in pharetra odio porttitor eget. Phasellus vel massa nisl. Nullam auctor eu ex quis eleifend. Phasellus congue odio sed mauris sagittis consequat. Praesent scelerisque vulputate felis, eget suscipit erat hendrerit sit amet. Mauris egestas pretium odio sit amet malesuada.";
 
+const getMistakesIndexes = (text, input) => {
+  const mistakes = [];
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] !== text[i]) mistakes.push(i);
+  }
+  return mistakes;
+}
+
 const App = () => {
-  const [typedText, setTypedText] = useState("");
+  const [inputText, setInputText] = useState("");
+  const [mistakeIndexes, setMistakeIndexes] = useState([2]);
+
+  useEffect(() => {
+    setMistakeIndexes(getMistakesIndexes(TEXT, inputText))
+  }, [inputText])
+
   return (
     <main className="App">
       <section className="controls">
@@ -17,10 +31,10 @@ const App = () => {
         <p>
           {
             TEXT.split("").map((char, index) => {
-              let className = "";
-              if (typedText.length > index) {
-                let mistake = false;
-                className = mistake ? "incorrect" : "correct"
+              let className = null; //className=null не будет добавлен в DOM, так что пустых классов не будет
+              if (inputText.length > index) {
+                let isMistake = mistakeIndexes.includes(index)
+                className = isMistake ? "incorrect" : "correct"
               }
               return <span key={index} className={className}>{char}</span>
             })
@@ -29,8 +43,8 @@ const App = () => {
         <textarea
           rows="10"
           placeholder="Type there"
-          value={typedText}
-          onChange={e => setTypedText(e.target.value)}
+          value={inputText}
+          onChange={e => setInputText(e.target.value)}
         />
       </section>
     </main>
