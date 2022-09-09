@@ -16,6 +16,7 @@ const App = () => {
   const [text, setText] = useState(TEXT)
   const [inputText, setInputText] = useState("");
   const [mistakeIndexes, setMistakeIndexes] = useState([2]);
+  const [statistics, setStatistics] = useState({})
   const inputRef = useRef();
 
   const [timeToFinish, { start, reset }] = useCountDown(
@@ -26,7 +27,8 @@ const App = () => {
   const getText = async () => {
     const response = await fetch("https://baconipsum.com/api/?type=meat-and-filler");
     const json = await response.json();
-    setText(json[0])
+    setText(json[0]);
+    setInputText("");
     console.log(json[0]);
   }
 
@@ -43,7 +45,7 @@ const App = () => {
 
   useEffect(() => {
     setMistakeIndexes(getMistakesIndexes(text, inputText))
-  }, [inputText])
+  }, [text, inputText])
 
   useEffect(() => {
     if (timeToFinish !== 0) return;
@@ -53,7 +55,8 @@ const App = () => {
     const charsPerSecond = (numOfChars / TIME_IN_SECONDS).toFixed(2);
     const percentOfCorrentChars = (numOfChars / inputText.length * 100).toFixed(2)
     setInputText("");
-    alert(`${charsPerSecond} characters per second, ${percentOfCorrentChars}% is correct`)
+    setStatistics({ charsPerSecond, percentOfCorrentChars })
+    //alert(`${charsPerSecond} correct characters per second, ${percentOfCorrentChars}% is correct`)
   }, [timeToFinish])
 
   return (
@@ -63,6 +66,8 @@ const App = () => {
         <button className="start" onClick={() => startTimer()}>start</button>
         <button className="reset" onClick={() => resetTimer()}>reset</button>
         <button className="getText" onClick={() => getText()}>get new text</button>
+        <h3>{statistics.charsPerSecond} correct chars per second</h3>
+        <h3>{statistics.percentOfCorrentChars}% is correct</h3>
       </section>
 
       <section className="input">
